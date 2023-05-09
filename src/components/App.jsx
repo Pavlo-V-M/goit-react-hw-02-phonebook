@@ -11,7 +11,7 @@ export class App extends React.Component {
   // Step 2.2 pass name: '', & contactsNumber: '', in ContactForm
   }
 
-  // handleChange = event => { 
+  // handleChange = event => {
   //   console.log(event.currentTarget);
   //   console.log(event.currentTarget.name);
   //   console.log(event.currentTarget.value);
@@ -22,6 +22,7 @@ export class App extends React.Component {
   // }
 
   // Destruct the handleChange method
+  // Step 2.2 pass handleChange in ContactForm
 
   handleChange = event => {
     const {name, value} = event.currentTarget;
@@ -47,6 +48,11 @@ export class App extends React.Component {
     }));
   };
 
+  // Step 2.3 get component's from ContactForm state
+  FormStateDataReceiver = data => { 
+    console.log(data);
+  }
+
   render() {
       return (
       <div
@@ -63,6 +69,10 @@ export class App extends React.Component {
           }}
         >
           <h1>Phonebook</h1>
+
+          // Step 2.2 pass form HTML layout in ContactForm
+
+          <ContactForm onReceiver={this.FormStateDataReceiver} />
 
           <form onSubmit={this.handleSubmit}>
             <label>Name

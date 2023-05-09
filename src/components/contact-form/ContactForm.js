@@ -6,6 +6,12 @@ class ContactForm extends Component {
     contactsNumber: '',
   }
 
+  handleChange = event => {
+    const {name, value} = event.currentTarget;
+
+    this.setState({[name]: value});
+  }
+
   handleSubmit = event => {
     event.preventDefault();
 
@@ -19,6 +25,8 @@ class ContactForm extends Component {
       name: '',
       contactsNumber: '',
     }));
+
+    this.props.onReceiver(this.state);
   };
 
   render() { 
