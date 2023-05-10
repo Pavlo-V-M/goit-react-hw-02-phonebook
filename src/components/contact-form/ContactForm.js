@@ -1,10 +1,15 @@
 import React, { Component } from "react";
 
+import { nanoid } from 'nanoid';
+
 class ContactForm extends Component {
   state = {
     name: '',
     contactsNumber: '',
   }
+
+  nameInputID = nanoid();
+  numberInputID = nanoid();
 
   handleChange = event => {
     const {name, value} = event.currentTarget;
@@ -20,19 +25,18 @@ class ContactForm extends Component {
       number: this.state.contactsNumber,
     };
 
-    this.setState(prevState => ({
-      contacts: [...prevState.contacts, newContact],
+    this.props.onReceiver(newContact);
+    // set-state cleaning after submit
+    this.setState({
       name: '',
       contactsNumber: '',
-    }));
-
-    this.props.onReceiver(this.state);
+    });
   };
 
   render() { 
     return (
       <form onSubmit={this.handleSubmit}>
-            <label>Name
+        <label htmlFor={this.nameInputID}>Name
               <input
                 type="text"
                 name="name"
@@ -41,10 +45,11 @@ class ContactForm extends Component {
                 required
                 value={this.state.name}
                 onChange={this.handleChange}
+                id={this.nameInputID}
               />
             </label>
 
-            <label>Number
+            <label htmlFor={this.numberInputID}>Number
               <input
                 type="tel"
                 name="contactsNumber"
@@ -53,15 +58,15 @@ class ContactForm extends Component {
                 required
                 value={this.state.contactsNumber}
                 onChange={this.handleChange}
+                id={this.numberInputID} 
               />
+              
             </label>
 
             <button type="submit">Add contact</button>
           </form>
     );
-
   }
-  
 }
 
 export default ContactForm;

@@ -40,6 +40,10 @@ button {
   margin-top: 20px;
 }
 
+span {
+  margin-right: 20px;
+}
+
 
 @import-normalize; /* bring in normalize.css styles */
 

@@ -1,63 +1,85 @@
 
 import React from 'react';
+import ContactForm from './contact-form/ContactForm';
+import ContactList from './contact-list/ContactList'; // new import
+import Filter from './filter/Filter'; // new import
 
 export class App extends React.Component {
   
   state = {
-  contacts: [],
-  name: '',
-  // Step 2.1 creat new object & add to the component's state
-  contactsNumber: '',
-  // Step 2.2 pass name: '', & contactsNumber: '', in ContactForm
+    contacts: [
+      {id: 'id-1', name: 'Rosie Simpson', number: '459-12-56'},
+      {id: 'id-2', name: 'Hermione Kline', number: '443-89-12'},
+      {id: 'id-3', name: 'Eden Clements', number: '645-17-79'},
+      {id: 'id-4', name: 'Annie Copeland', number: '227-91-26'},
+    ],
+    search: '',
   }
 
-  // handleChange = event => {
-  //   console.log(event.currentTarget);
-  //   console.log(event.currentTarget.name);
-  //   console.log(event.currentTarget.value);
+  /* 
+  Step 2.1 creat new object & add to the component's state
+  Step 2.1 add an event handler function for the form's onSubmit event
+  prevent the default form submission behavior In this function
+  
+  Step 2.2 pass name: '', & contactsNumber: '', in ContactForm
+  Step 2.2 pass form HTML layout in ContactForm
+  Step 2.2 pass handleChange in ContactForm
+  Step 2.2 pass handleSubmit in ContactForm
+  
+  Step 2.3 get component's from ContactForm state 
+  */
 
-  //   this.setState({
-  //     [event.currentTarget.name]: event.currentTarget.value
-  //   });
+  // FormStateDataReceiver = data => {
+  //   this.setState(prevState => ({
+  //     contacts: [...prevState.contacts, data],
+  //   }));
+  //   /* 
+  //   console.log(data);
+  //   setTimeout(() => {
+  //   console.log(data);
+  //   }, 2000); 
+  //   */
   // }
 
-  // Destruct the handleChange method
-  // Step 2.2 pass handleChange in ContactForm
+  /* Updating the FormStateDataReceiver method to
+  disallow entering an existing contact */
+  
+  FormStateDataReceiver = (data) => {
+  const { name } = data;
+  const existingContact = this.state.contacts.find((contact) => contact.name === name);
+  if (existingContact) {
+    alert(`${name} is already in contacts`);
+    return;
+  }
+  this.setState((prevState) => ({
+    contacts: [...prevState.contacts, data],
+  }));
+ };
 
-  handleChange = event => {
-    const {name, value} = event.currentTarget;
-
-    this.setState({[name]: value});
+  // adding a filter
+  
+  handleSearchChange = event => {
+    this.setState({ search: event.target.value });
   }
 
-  // Step 2.1 add an event handler function for the form's onSubmit event
-  //prevent the default form submission behavior In this function
-  // Step 2.2 pass handleSubmit in ContactForm
-  handleSubmit = event => {
-    event.preventDefault();
+  // adding remove
 
-    const newContact = {
-      name: this.state.name,
-      number: this.state.contactsNumber,
-    };
-
+  handleDeleteContact = id => {
     this.setState(prevState => ({
-      contacts: [...prevState.contacts, newContact],
-      name: '',
-      contactsNumber: '',
+      contacts: prevState.contacts.filter(contact => contact.id !== id),
     }));
-  };
-
-  // Step 2.3 get component's from ContactForm state
-  FormStateDataReceiver = data => { 
-    console.log(data);
   }
-
+  
   render() {
-      return (
+    const { contacts, search } = this.state;
+    const filteredContacts = contacts.filter(contact =>
+      contact.name.toLowerCase().includes(search.toLowerCase())
+    );
+
+    return (
       <div
         style={{
-          height: '100vh',
+          // height: '100vh',
           display: 'flex',
           flexDirection: 'column',
           // justifyContent: 'center',
@@ -70,51 +92,15 @@ export class App extends React.Component {
         >
           <h1>Phonebook</h1>
 
-          // Step 2.2 pass form HTML layout in ContactForm
-
           <ContactForm onReceiver={this.FormStateDataReceiver} />
-
-          <form onSubmit={this.handleSubmit}>
-            <label>Name
-              <input
-                type="text"
-                name="name"
-                pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-                title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-                required
-                value={this.state.name}
-                onChange={this.handleChange}
-              />
-            </label>
-
-            <label>Number
-              <input
-                type="tel"
-                name="contactsNumber"
-                pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-                title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-                required
-                value={this.state.contactsNumber}
-                onChange={this.handleChange}
-              />
-            </label>
-
-            <button type="submit">Add contact</button>
-          </form>
 
           <h2>Contacts</h2>
 
-          <ul>
-            {this.state.contacts.map(contact => (
-              <li key={contact.number}>
-                {contact.name}: <span>{contact.number}</span>
-              </li>))}
-          </ul>
+          <Filter value={search} onChange={this.handleSearchChange} />
+        
+          <ContactList contacts={filteredContacts} onDelete={this.handleDeleteContact} />
           
        </div>
   );
   }
-  
 };
-
-// export default App;
